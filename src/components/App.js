@@ -84,6 +84,13 @@ class App extends Component {
       this.state.selfNFT.methods.mint(this.state.account, img_url).send({ from: this.state.account }).on('transactionHash', (hash) => {
         this.setState({ loading: false })
         this.setState({'accountSNFTs': [...this.state.accountSNFTs, img_url]})
+      }).catch((e) => {
+        if(e.code === 4001){
+          alert('Transaction rejected')
+        }else{
+          alert('Something went wrong')
+        }
+        this.setState({ loading: false })
       })
     })
   }
