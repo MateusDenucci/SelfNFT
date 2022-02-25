@@ -3,22 +3,21 @@ import Web3 from 'web3';
 import './App.css';
 import SelfNFT from '../abis/SelfNFT.json'
 import Navbar from './Navbar'
-import Main from './Main'
+import UploadForm from './UploadForm'
+import NFTGallery from './NFTGallery'
 
 
 const ipfsClient = require('ipfs-http-client')
 const ipfs = ipfsClient({ host: 'ipfs.infura.io', port: 5001, protocol: 'https' }) // leaving out the arguments will default to these values
 
 class App extends Component {
-
-  async componentWillMount() {
-    this.startWeb3()
-  }
-  
-
   async startWeb3() {
     await this.loadWeb3()
     await this.loadBlockchainData()
+  }
+
+  async componentWillMount() {
+    this.startWeb3()
   }
 
   async loadWeb3() {
@@ -118,11 +117,15 @@ class App extends Component {
         <Navbar account={this.state.account} startWeb3={this.startWeb3}/>
         { this.state.loading
           ? <div id="loader" className="text-center mt-5"><p>Loading...</p></div>
-          : <Main
-              accountSNFTs={this.state.accountSNFTs}
+          : <div>
+            <UploadForm
               captureFile={this.captureFile}
               uploadImage={this.uploadImage}
             />
+            <NFTGallery
+              accountSNFTs={this.state.accountSNFTs}
+            />
+            </div>
         }
       </div>
     );
