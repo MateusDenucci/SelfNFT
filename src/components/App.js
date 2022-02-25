@@ -83,6 +83,7 @@ class App extends Component {
       let img_url = 'https://ipfs.infura.io/ipfs/' + result[0].hash
       this.state.selfNFT.methods.mint(this.state.account, img_url).send({ from: this.state.account }).on('transactionHash', (hash) => {
         this.setState({ loading: false })
+        this.setState({'accountSNFTs': [...this.state.accountSNFTs, img_url]})
       })
     })
   }
