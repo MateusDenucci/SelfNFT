@@ -1,6 +1,5 @@
 import React, { Component } from 'react';
 import Web3 from 'web3';
-import Identicon from 'identicon.js';
 import './App.css';
 import SelfNFT from '../abis/SelfNFT.json'
 import Navbar from './Navbar'
@@ -40,23 +39,7 @@ class App extends Component {
     if(networkData){
       const selfNFT = new web3.eth.Contract(SelfNFT.abi, networkData.address)
       this.setState({selfNFT})
-      const imagesCount = await selfNFT.methods.imageCount().call()
-      this.setState({imagesCount})
       this.setState({'loading': false})
-
-      // Load images
-      for (var i = 1; i <= imagesCount; i++) {
-        const image = await selfNFT.methods.images(i).call()
-        this.setState({
-          'images': [...this.state.images, {'id': image.id, 'hash': image.hash, 'description': image.description, 'tipAmount': image.tipAmount, 'author': image.author}]
-        })
-      }
-
-      // Sort images. Show highest tipped images first
-      this.setState({
-        images: this.state.images.sort((a,b) => b.tipAmount - a.tipAmount )
-      })
-
     }else{
       alert('Wrong network')
     }
@@ -75,7 +58,7 @@ class App extends Component {
     }
   }
 
-  uploadImage = description => {
+  uploadImage = () => {
     console.log("Submitting file to ipfs...")
 
     //adding file to the IPFS
@@ -87,19 +70,11 @@ class App extends Component {
       }
 
       this.setState({ loading: true })
-      this.state.selfNFT.methods.uploadImage(result[0].hash, description).send({ from: this.state.account }).on('transactionHash', (hash) => {
+      let img_url = 'https://ipfs.infura.io/ipfs/' + result[0].hash
+      this.state.selfNFT.methods.mint(this.state.account, img_url).send({ from: this.state.account }).on('transactionHash', (hash) => {
         this.setState({ loading: false })
       })
     })
-  }
-
-  tipImageOwner = (id, tipAmount) => {
-    this.setState({ loading: true })
-    this.state.selfNFT.methods.tipImageOwner(id).send({ from: this.state.account, value: tipAmount }).on('transactionHash', (hash) => {
-      this.setState({ loading: false })
-      //this.state.selfNFT.events.ImageTipped({fromBlock: 0, toBlock: 'latest'}).on('data', event => window.location.reload())
-    })
-
   }
 
   constructor(props) {
