@@ -39,6 +39,16 @@ class App extends Component {
     if(networkData){
       const selfNFT = new web3.eth.Contract(SelfNFT.abi, networkData.address)
       this.setState({selfNFT})
+
+      let accountBalance = await selfNFT.methods.balanceOf(this.state.account).call()
+      console.log(accountBalance);
+      for(let i = 0; i < accountBalance; i++){
+        let id = await selfNFT.methods.tokenOfOwnerByIndex(accounts[0], i).call()
+        let accountSNFT = await selfNFT.methods.tokenURI(id).call()
+        console.log(accountSNFT);
+        this.setState({'accountSNFTs': [...this.state.accountSNFTs, accountSNFT]})
+      }
+
       this.setState({'loading': false})
     }else{
       alert('Wrong network')
@@ -82,7 +92,7 @@ class App extends Component {
     this.state = {
       account: '',
       selfNFT: null,
-      images: [],
+      accountSNFTs: [],
       loading: true
     }
   }
@@ -94,12 +104,10 @@ class App extends Component {
         { this.state.loading
           ? <div id="loader" className="text-center mt-5"><p>Loading...</p></div>
           : <Main
-              images={this.state.images}
+              accountSNFTs={this.state.accountSNFTs}
               captureFile={this.captureFile}
               uploadImage={this.uploadImage}
-              tipImageOwner={this.tipImageOwner}
             />
-          }
         }
       </div>
     );
