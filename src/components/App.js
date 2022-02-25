@@ -12,6 +12,11 @@ const ipfs = ipfsClient({ host: 'ipfs.infura.io', port: 5001, protocol: 'https' 
 class App extends Component {
 
   async componentWillMount() {
+    this.startWeb3()
+  }
+  
+
+  async startWeb3() {
     await this.loadWeb3()
     await this.loadBlockchainData()
   }
@@ -103,12 +108,14 @@ class App extends Component {
       accountSNFTs: [],
       loading: true
     }
+
+    this.startWeb3 = this.startWeb3.bind(this)
   }
 
   render() {
     return (
       <div>
-        <Navbar account={this.state.account} />
+        <Navbar account={this.state.account} startWeb3={this.startWeb3}/>
         { this.state.loading
           ? <div id="loader" className="text-center mt-5"><p>Loading...</p></div>
           : <Main

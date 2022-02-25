@@ -16,7 +16,11 @@ class Navbar extends Component {
         <ul className="navbar-nav px-3">
           <li className="nav-item text-nowrap d-none d-sm-none d-sm-block">
             <small className="text-secondary">
-              <small id="account" className='text-white'>{this.props.account}</small>
+              {
+                this.props.account ?
+                <small id="account" className='text-white'>{this.props.account}</small> :
+                <button onClick={this.props.startWeb3} className="btn btn-warning">Connect Wallet</button>
+              }
             </small>
           </li>
         </ul>
